@@ -13,4 +13,4 @@ pip install -r requirements.txt
 python main.py
 ```
 
-4. Go to http://localhost:5000
+4. Go to http://localhost:5000 or http://0.0.0.0:5000 if running on LAN in a device other than server.
