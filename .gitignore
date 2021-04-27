@@ -6,6 +6,10 @@ Icon?
 # C extensions
 *.so
 
+# Env
+facemask/
+env
+venv
 # Distribution / packaging
 .Python
 build/
