@@ -15,6 +15,7 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 import numpy as np
 import pandas as pd
 import time
+from PIL import Image
 # import serial
 from datetime import datetime
 # pi_camera = VideoCamera(flip=False) # flip pi camera if upside down.
@@ -25,7 +26,7 @@ df = pd.DataFrame(columns=['mask','no_mask','time', 'image', 'prediction_confide
 cascPath = "models/haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascPath)
 model = load_model("models/mask_recog_ver2.h5")
-video_capture = cv2.VideoCapture('http://192.168.100.3:4747/video')
+# video_capture = cv2.VideoCapture('http://192.168.100.3:4747/video')
 
 # App Globals (do not edit)
 app = Flask(__name__)
@@ -50,7 +51,7 @@ def genRequest(frame):
     return prediction
 
 
-@app.route('/video_feedR') 
+@app.route('/video_feed') 
 def video_feed():
     return Response(gen(camera),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
@@ -61,9 +62,14 @@ def prediction():
     if request.method == 'POST':
         if 'file' not in request.files:
             return {'error': 'No image submited'}
-        f = request.files['file']
-        result = genRequest(f)
-        return result
+        try:
+            f = request.files['file'].read()
+            npimg = np.fromstring(f, np.uint8)
+            frame = cv2.imdecode(npimg, cv2.IMREAD_UNCHANGED)
+            result = genRequest(frame)
+            return result
+        except error as e:
+            return e
 
 
 def add_mask():
