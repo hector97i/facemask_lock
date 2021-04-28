@@ -38,17 +38,32 @@ def gen(camera):
     #get camera frame
     while True:
         ret, frame = camera.read()
-        frame = mask_detection(frame)
+        frame = mask_detection(frame, True)
         ret, img = cv2.imencode('.jpg', frame)
         img = img.tobytes()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + img + b'\r\n\r\n')
 
-@app.route('/video_feed')
+def genRequest(frame):
+    #get camera frame
+    prediction = mask_detection(frame, False)
+    return prediction
+
+
+@app.route('/video_feedR') 
 def video_feed():
     return Response(gen(camera),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
+@app.route('/prediction', methods = ['POST'])
+def prediction():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return {'error': 'No image submited'}
+        f = request.files['file']
+        result = genRequest(f)
+        return result
 
 
 def add_mask():
@@ -74,7 +89,7 @@ def add_nomask():
 
     # df=df.append(new_row, ignore_index=True)
     # df.to_csv('maskdata.csv', index = True)
-def mask_detection(frame):
+def mask_detection(frame, image_flag):
     # Capture frame-by-frame
     # ret, frame = video_capture.read()
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -114,13 +129,10 @@ def mask_detection(frame):
 
         cv2.rectangle(frame, (x, y), (x + w, y + h),color, 2)
 
-    return frame
-    # cv2.imshow('Video', frame)
-    # if cv2.waitKey(1) & 0xFF == ord('q'):
-    #     break
-    # video_capture.release()
-    # cv2.destroyAllWindows()
-
+    if image_flag:
+        return frame
+    else:
+        return label
 
 if __name__ == '__main__':
 
