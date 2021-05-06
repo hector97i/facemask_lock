@@ -1,8 +1,51 @@
 import requests
+import cv2
+from imutils.video.pivideostream import PiVideoStream
+import imutils
+import time
+import numpy as np
 
-def post_image(img, base_url):
-    url = 'http://' + base_url + '/predict'
-    files = {'media': img}
-    response = requests.post(url, files=files)
+base_url = '192.168.100.32:5000'
 
 
+class VideoCamera(object):
+    def __init__(self, flip = False):
+        self.vs = PiVideoStream().start()
+        self.flip = flip
+        time.sleep(2.0)
+
+    def __del__(self):
+        self.vs.stop()
+
+    def flip_if_needed(self, frame):
+        if self.flip:
+            return np.flip(frame, 0)
+        return frame
+
+    def get_frame(self):
+        frame = self.flip_if_needed(self.vs.read())
+        ret, jpeg = cv2.imencode('.jpg', frame)
+        return jpeg.tobytes()
+
+    def post_image(self):
+        img = self.get_frame()
+        url = 'http://' + base_url + '/predict'
+        files = {'frame': img}
+        response = requests.post(url, files=files)
+        print(response)
+
+def main():
+    
+    pi_camera = VideoCamera(flip=False) 
+    base_url = input('Server URL') + ':5000'
+
+    while True:
+        print('Requesting prediction to http://' + base_url)
+        res = pi_camera.post_image()
+        print(f"RESULT: {res}")
+        time.sleep(5)
+
+
+if __name__ == '__main__':
+    main()
+    

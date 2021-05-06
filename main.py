@@ -63,7 +63,7 @@ def prediction():
         if 'file' not in request.files:
             return {'error': 'No image submited'}
         try:
-            f = request.files['file'].read()
+            f = request.files['frame'].read()
             npimg = np.fromstring(f, np.uint8)
             frame = cv2.imdecode(npimg, cv2.IMREAD_UNCHANGED)
             result = genRequest(frame)
