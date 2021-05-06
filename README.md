@@ -13,4 +13,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
+4. Run the following command in the GCP instance with superuser privileges:
+```gunicorn -2 4 -b 0.0.0.0:80 main:app```
+
 4. Go to http://localhost:5000 or http://0.0.0.0:5000 if running on LAN in a device other than server.
