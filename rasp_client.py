@@ -30,7 +30,7 @@ class VideoCamera(object):
     def post_image(self):
         img = self.get_frame()
         url = 'http://' + base_url + '/predict'
-        files = {'frame': img}
+        files = {'file': img}
         response = requests.post(url, files=files)
         print(response)
 

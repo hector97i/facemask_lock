@@ -33,7 +33,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html') #you can customze index.html here
+    return "HELLO WORLD!" #you can customze index.html here
 
 def gen(camera):
     #get camera frame
@@ -63,7 +63,7 @@ def prediction():
         if 'file' not in request.files:
             return {'error': 'No image submited'}
         try:
-            f = request.files['frame'].read()
+            f = request.files['file'].read()
             npimg = np.fromstring(f, np.uint8)
             frame = cv2.imdecode(npimg, cv2.IMREAD_UNCHANGED)
             result = genRequest(frame)
