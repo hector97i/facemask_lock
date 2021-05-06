@@ -37,7 +37,7 @@ class VideoCamera(object):
 def main():
     
     pi_camera = VideoCamera(flip=False) 
-    base_url = input('Server URL') + ':5000'
+    base_url = input('Server URL: ') + ':5000'
 
     while True:
         print('Requesting prediction to http://' + base_url)
@@ -48,4 +48,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
