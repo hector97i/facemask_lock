@@ -5,7 +5,7 @@ import imutils
 import time
 import numpy as np
 
-base_url = '192.168.100.32:5000'
+base_url = '35.236.20.13'
 
 
 class VideoCamera(object):
@@ -37,10 +37,10 @@ class VideoCamera(object):
 def main():
     
     pi_camera = VideoCamera(flip=False) 
-    base_url = input('Server URL: ') + ':5000'
+    # base_url = input('Server URL: ') + ':5000'
 
     while True:
-        print('Requesting prediction to http://' + base_url)
+        print('Requesting prediction to http://' + base_url + '/predict')
         res = pi_camera.post_image()
         print(f"RESULT: {res}")
         time.sleep(5)
