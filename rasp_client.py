@@ -24,15 +24,16 @@ class VideoCamera(object):
 
     def get_frame(self):
         frame = self.flip_if_needed(self.vs.read())
+        cv2.imshow('Video', frame)
         ret, jpeg = cv2.imencode('.jpg', frame)
         return jpeg.tobytes()
 
     def post_image(self):
         img = self.get_frame()
-        url = 'http://' + base_url + '/predict'
+        url = 'http://' + base_url + '/prediction'
         files = {'file': img}
         response = requests.post(url, files=files)
-        print(response)
+        return response
 
 def main():
     
@@ -40,11 +41,16 @@ def main():
     # base_url = input('Server URL: ') + ':5000'
 
     while True:
-        print('Requesting prediction to http://' + base_url + '/predict')
-        res = pi_camera.post_image()
+        print('Requesting prediction to http://' + base_url + '/prediction')
+        res = pi_camera.post_image().get_data()
         print(f"RESULT: {res}")
+        # if cv2.waitKey(1) &amp; 0xFF == ord('q'):
+        #    break
+
         time.sleep(5)
 
+    cv2.destroyAllWindows()
+    print('END')
 
 if __name__ == '__main__':
     main()

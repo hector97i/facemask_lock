@@ -143,7 +143,7 @@ def mask_detection(frame, image_flag):
         if image_flag:
             return frame
         else:
-            return label
+            return Response({res: label}, mimetype="application/json")
 
     except Exception as e:
         return e
