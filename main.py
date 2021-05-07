@@ -19,7 +19,7 @@ from PIL import Image
 # import serial
 from datetime import datetime
 # pi_camera = VideoCamera(flip=False) # flip pi camera if upside down.
-camera = cv2.VideoCapture('http://192.168.100.3:4747/video')
+# camera = cv2.VideoCapture('http://192.168.100.3:4747/video')
 
 
 df = pd.DataFrame(columns=['mask','no_mask','time', 'image', 'prediction_confidence'])
@@ -35,15 +35,15 @@ app = Flask(__name__)
 def index():
     return "HELLO WORLD!" #you can customze index.html here
 
-def gen(camera):
-    #get camera frame
-    while True:
-        ret, frame = camera.read()
-        frame = mask_detection(frame, True)
-        ret, img = cv2.imencode('.jpg', frame)
-        img = img.tobytes()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + img + b'\r\n\r\n')
+# def gen(camera):
+#     #get camera frame
+#     while True:
+#         ret, frame = camera.read()
+#         frame = mask_detection(frame, True)
+#         ret, img = cv2.imencode('.jpg', frame)
+#         img = img.tobytes()
+#         yield (b'--frame\r\n'
+#                b'Content-Type: image/jpeg\r\n\r\n' + img + b'\r\n\r\n')
 
 def genRequest(frame):
     #get camera frame
@@ -51,10 +51,10 @@ def genRequest(frame):
     return prediction
 
 
-@app.route('/video_feed') 
-def video_feed():
-    return Response(gen(camera),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+# @app.route('/video_feed') 
+# def video_feed():
+#     return Response(gen(camera),
+#                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/prediction', methods = ['POST'])
@@ -68,7 +68,7 @@ def prediction():
             frame = cv2.imdecode(npimg, cv2.IMREAD_UNCHANGED)
             result = genRequest(frame)
             return result
-        except error as e:
+        except Exception as e:
             return e
 
 
@@ -98,6 +98,7 @@ def add_nomask():
 def mask_detection(frame, image_flag):
     # Capture frame-by-frame
     # ret, frame = video_capture.read()
+    label = 'NO FACES DETECTED'
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = faceCascade.detectMultiScale(gray,
                                         scaleFactor=1.1,
