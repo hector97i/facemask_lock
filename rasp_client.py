@@ -31,7 +31,7 @@ class VideoCamera(object):
         url = 'http://' + base_url + '/prediction'
         files = {'file': img}
         response = requests.post(url, files=files)
-        return response.text
+        return response
 
 def main():
 

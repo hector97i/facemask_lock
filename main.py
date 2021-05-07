@@ -9,6 +9,7 @@ import time
 import threading
 import os
 import cv2
+from flask import jsonify
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
@@ -96,7 +97,7 @@ def add_nomask():
     # df=df.append(new_row, ignore_index=True)
     # df.to_csv('maskdata.csv', index = True)
 
-    
+
 def mask_detection(frame, image_flag):
     # Capture frame-by-frame
     # ret, frame = video_capture.read()
@@ -127,14 +128,8 @@ def mask_detection(frame, image_flag):
             label = "Mask" if mask > withoutMask else "No Mask"
             # color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
             label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
-            if mask > withoutMask:
-                print('MASK')
-                # add_mask()
-
-            else:
-                print('NO MASK')
-                # add_nomask()
-
+            
+            print(label)
             # cv2.putText(frame, label, (x, y- 10),
             #             cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
 
@@ -143,7 +138,7 @@ def mask_detection(frame, image_flag):
         if image_flag:
             return frame
         else:
-            return Response({"res": str(label)}, mimetype="application/json")
+            return jsonify({"result": label})
 
     except Exception as e:
         return e
