@@ -95,9 +95,12 @@ def add_nomask():
 
     # df=df.append(new_row, ignore_index=True)
     # df.to_csv('maskdata.csv', index = True)
+
+    
 def mask_detection(frame, image_flag):
     # Capture frame-by-frame
     # ret, frame = video_capture.read()
+    label = ''
     try:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = faceCascade.detectMultiScale(gray,
@@ -141,9 +144,9 @@ def mask_detection(frame, image_flag):
             return frame
         else:
             return label
-            
+
     except Exception as e:
-        print(e)
+        return e
 
 if __name__ == '__main__':
 
